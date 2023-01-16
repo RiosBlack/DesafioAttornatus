@@ -1,5 +1,6 @@
 package com.attornatus.desafioDouglasRios.service;
 
+import com.attornatus.desafioDouglasRios.entity.Endereco;
 import com.attornatus.desafioDouglasRios.entity.Pessoa;
 import com.attornatus.desafioDouglasRios.entity.dto.PessoaDTO;
 import com.attornatus.desafioDouglasRios.repository.PessoaRepository;
@@ -43,15 +44,18 @@ public class PessoaService {
 
     public ResponseEntity salvar(PessoaDTO pessoaDTO){
         Pessoa pessoa = mapper.convertValue(pessoaDTO, Pessoa.class);
-        try{
+        List<Endereco> enderecoConvertido = new ArrayList<>();
+            for (Endereco endereco: pessoaDTO.getEndereco()){
+                Endereco enderecoParaConversao = mapper.convertValue(endereco, Endereco.class);
+                enderecoConvertido.add(enderecoParaConversao);
+            }
             if (pessoa == null) {
                 return new ResponseEntity("O objeto pessoa não pode ser null ou vazio", HttpStatus.BAD_REQUEST);
             }
+            pessoa.setEndereco(enderecoConvertido);
             Pessoa pessoaSalva = pessoaRepository.save(pessoa);
             return new ResponseEntity("A Pessoa " + pessoaSalva.getNome() + " foi salva com sucesso", HttpStatus.CREATED);
-        }catch (Exception e){
-            return new ResponseEntity("Erro ao salvar a pessoa.", HttpStatus.BAD_REQUEST);
-        }
+
     }
 
 

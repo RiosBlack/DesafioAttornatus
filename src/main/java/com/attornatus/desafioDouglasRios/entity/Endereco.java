@@ -27,13 +27,11 @@ public class Endereco {
 
     @Column(nullable = false)
     @NotBlank(message = "Não pode estar vazio")
-    private int numero;
+    private String numero;
 
     @Column(nullable = false)
     @NotBlank(message = "Não pode estar vazio")
     private String cidade;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Não pode estar vazio")
     private Boolean isEnderecoPrincipal;
 }

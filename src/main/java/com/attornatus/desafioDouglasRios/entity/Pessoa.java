@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,8 +39,7 @@ public class Pessoa {
     @Column(nullable = false)
     private Timestamp dataNascimento;
 
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    @OneToMany (cascade = CascadeType.ALL)
+    private List<Endereco> endereco;
 
 }

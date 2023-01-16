@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,5 +26,5 @@ public class PessoaDTO {
 
     private Timestamp dataNascimento;
 
-    private Endereco endereco;
+    private List<Endereco> endereco;
 }

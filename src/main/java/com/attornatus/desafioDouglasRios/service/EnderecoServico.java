@@ -1,7 +1,6 @@
 package com.attornatus.desafioDouglasRios.service;
 
 import com.attornatus.desafioDouglasRios.entity.Endereco;
-import com.attornatus.desafioDouglasRios.entity.Pessoa;
 import com.attornatus.desafioDouglasRios.entity.dto.EnderecoDTO;
 import com.attornatus.desafioDouglasRios.repository.EnderecoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,16 +33,13 @@ public class EnderecoServico {
 
 
     public ResponseEntity buscarCep(String cep) {
-        List<Endereco> listaEnderecoCep = enderecoRepository.findByCep(cep);
-        List<EnderecoDTO> listaEnderecoDTO = new ArrayList<>();
-        if (listaEnderecoCep.isEmpty()){
-            return new ResponseEntity("Endereço não encontrado", HttpStatus.BAD_REQUEST);
+        Optional<Endereco> endereco = enderecoRepository.findByCep(cep);
+        if (endereco.isEmpty()){
+            return new ResponseEntity("Cep não encontrado", HttpStatus.BAD_REQUEST);
         }
-        for (Endereco endereco : listaEnderecoCep){
-            EnderecoDTO enderecoDTO = mapper.convertValue(endereco, EnderecoDTO.class);
-            listaEnderecoDTO.add(enderecoDTO);
-        }
-        return new ResponseEntity(listaEnderecoDTO, HttpStatus.OK);
+        Endereco endereçoGet = endereco.get();
+        EnderecoDTO enderecoDTO = mapper.convertValue(endereçoGet, EnderecoDTO.class);
+        return new ResponseEntity(enderecoDTO, HttpStatus.OK);
     }
 
 
@@ -61,22 +57,17 @@ public class EnderecoServico {
     }
 
     public ResponseEntity atualizar(EnderecoDTO enderecoDTO) {
-        List<Endereco> cep = enderecoRepository.findByCep(enderecoDTO.getCep());
-        if (cep.isEmpty()){
-            return new ResponseEntity("Endereço não encontrado", HttpStatus.BAD_REQUEST);
-        }
-        for (Endereco endereco : cep) {
-            if (endereco.getCep() == enderecoDTO.getCep() && endereco.getNumero() == enderecoDTO.getNumero()){
-                Endereco enderecoAtualizado = endereco;
-                enderecoAtualizado.setCep(enderecoDTO.getCep());
-                enderecoAtualizado.setIsEnderecoPrincipal(enderecoDTO.getIsEnderecoPrincipal());
-                enderecoAtualizado.setCidade(enderecoDTO.getCidade());
-                enderecoAtualizado.setNumero(enderecoDTO.getNumero());
-                enderecoAtualizado.setLogradouro(enderecoDTO.getLogradouro());
-                enderecoRepository.save(enderecoAtualizado);
-                return new ResponseEntity("O endereço de cep " + enderecoAtualizado.getCep() + " foi atualizado com sucesso.", HttpStatus.OK);
-            }
-        };
-        return null;
+       Optional<Endereco> cep = enderecoRepository.findByCep(enderecoDTO.getCep());
+       if (cep.isEmpty()){
+           return new ResponseEntity("Cep não encontrado", HttpStatus.BAD_REQUEST);
+       }
+       Endereco enderecoAtualizado = cep.get();
+       enderecoAtualizado.setIsEnderecoPrincipal(enderecoDTO.getIsEnderecoPrincipal());
+       enderecoAtualizado.setNumero(enderecoDTO.getNumero());
+       enderecoAtualizado.setLogradouro(enderecoDTO.getLogradouro());
+       enderecoAtualizado.setCidade(enderecoDTO.getCidade());
+       enderecoAtualizado.setCep(enderecoDTO.getCep());
+       enderecoRepository.save(enderecoAtualizado);
+       return new ResponseEntity("Endereço atualizado com sucesso.",HttpStatus.OK);
     }
 }
